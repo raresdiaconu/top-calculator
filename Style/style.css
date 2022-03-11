@@ -1,0 +1,23 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --display-color: #123123;
+    --btn-dark: #123123;
+    --btn-light: #123123;
+    --btn-highlight: #123123;
+}
+
+html {
+    font-family: 'Roboto', sans-serif;
+}
+
+.calculator {
+    width: 235px;
+    height: 320px;
+}
