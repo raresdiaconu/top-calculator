@@ -61,8 +61,6 @@ function getOperator(e) {
     getFirstNumber();
     currentNumber = "";
     currentOperator = e.currentTarget.id;
-
-
 }
 
 function getFirstNumber() {
@@ -77,20 +75,32 @@ function getSecondNumber() {
 const equalsBtn = document.getElementById("Equal");
 equalsBtn.addEventListener("click", getEquation);
 function getEquation() {
-    // console.log(`SN: ${secondNumber}`)
-    // console.log(`CN: ${currentNumber}`)
-    // console.log(`FN: ${firstNumber}`)
-    if (currentOperator === "*" && currentNumber === "") {
-        
-        console.log("SHTOP")
+    if (currentOperator === "Slash" && currentNumber === "") {
+        currentNumber = 1;
+        firstNumber = 1;
+        return display.textContent = 1;
     }
+    if (currentOperator === "*" && currentNumber !== "") {
+        secondNumber = currentNumber;
+        currentOperator = "*";
+        operate(currentOperator, firstNumber, secondNumber);
+        return;
+    } 
+    if (currentOperator === "*" && currentNumber === "") {
+        currentNumber = firstNumber;
+        currentOperator = "*";
+        getSecondNumber();
+        operate(currentOperator, firstNumber, secondNumber);
+        return;
+    }
+    if (currentOperator === "Minus" && currentNumber === "") resetCalculator();
+    if (currentOperator === "+" && currentNumber === "") currentNumber = firstNumber;
+
+    
     getSecondNumber();
     operate(currentOperator, firstNumber, secondNumber);
-    // console.log(`CO: ${currentOperator}`)
     currentOperator = "";
     removeOperatorStyle()
-    
-    
 }
 
 const operate = function(operator, firstNumber, secondNumber) {
@@ -99,7 +109,7 @@ const operate = function(operator, firstNumber, secondNumber) {
     if (operator === "*") multiply(firstNumber, secondNumber);
     if (operator === "Slash") divide(firstNumber, secondNumber);
     if (currentNumber === Infinity) return display.textContent = "Error";
-    return display.textContent = Math.round(currentNumber * 100000) / 100000;
+    return display.textContent = Math.round(currentNumber * (10 ** 11)) / (10 ** 11);
 }
 
 const add = function(firstNumber, secondNumber) {
@@ -152,3 +162,11 @@ allBtns.forEach(button => button.addEventListener("mousedown", (e) => e.currentT
 allBtns.forEach(button => button.addEventListener("mouseup", (e) => e.currentTarget.classList.remove("clicked")))
 
 
+
+
+
+// HELPER
+        // console.log(`FN: ${firstNumber}`)
+        // console.log(`SN: ${secondNumber}`)
+        // console.log(`CN: ${currentNumber}`)
+        // console.log(`CO: ${currentOperator}`)
