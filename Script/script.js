@@ -75,32 +75,57 @@ function getSecondNumber() {
 const equalsBtn = document.getElementById("Equal");
 equalsBtn.addEventListener("click", getEquation);
 function getEquation() {
-    if (currentOperator === "Slash" && currentNumber === "") {
-        currentNumber = 1;
-        firstNumber = 1;
-        return display.textContent = 1;
-    }
-    if (currentOperator === "*" && currentNumber !== "") {
-        secondNumber = currentNumber;
-        currentOperator = "*";
-        operate(currentOperator, firstNumber, secondNumber);
-        return;
-    } 
-    if (currentOperator === "*" && currentNumber === "") {
-        currentNumber = firstNumber;
-        currentOperator = "*";
-        getSecondNumber();
-        operate(currentOperator, firstNumber, secondNumber);
-        return;
-    }
-    if (currentOperator === "Minus" && currentNumber === "") resetCalculator();
-    if (currentOperator === "+" && currentNumber === "") currentNumber = firstNumber;
+    // if (currentOperator === "Slash" && currentNumber === "") {
+    //     currentNumber = 1;
+    //     firstNumber = 1;
+    //     return display.textContent = 1;
+    // }
+    // if (currentOperator === "*" && currentNumber !== "") {
+    //     secondNumber = currentNumber;
+    //     currentOperator = "*";
+    //     operate(currentOperator, firstNumber, secondNumber);
+    //     return;
+    // } 
+    // if (currentOperator === "*" && currentNumber === "") {
+    //     currentNumber = firstNumber;
+    //     currentOperator = "*";
+    //     getSecondNumber();
+    //     operate(currentOperator, firstNumber, secondNumber);
+    //     return;
+    // }
+    // if (currentOperator === "Minus" && currentNumber === "") resetCalculator();
+    // if (currentOperator === "+" && currentNumber === "") currentNumber = firstNumber;
 
-    
+    switch (true) {
+        case (currentOperator === "Slash" && currentNumber === ""):
+            currentNumber = 1;
+            firstNumber = 1;
+            return display.textContent = 1;
+        case (currentOperator === "*" && currentNumber !== ""):
+            secondNumber = currentNumber;
+            currentOperator = "*";
+            operate(currentOperator, firstNumber, secondNumber);
+            return;
+        case (currentOperator === "*" && currentNumber === ""):
+            currentNumber = firstNumber;
+            currentOperator = "*";
+            getSecondNumber();
+            operate(currentOperator, firstNumber, secondNumber);
+            return;
+        case (currentOperator === "Minus" && currentNumber === ""):
+            resetCalculator();
+            break;
+        case (currentOperator === "+" && currentNumber === ""):
+            currentNumber = firstNumber;
+            break;
+    }
+
     getSecondNumber();
     operate(currentOperator, firstNumber, secondNumber);
     currentOperator = "";
     removeOperatorStyle()
+
+    
 }
 
 const operate = function(operator, firstNumber, secondNumber) {
