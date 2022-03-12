@@ -54,10 +54,14 @@ function removeOperatorStyle() {
 
 
 function getOperator(e) {
-    if (currentOperator) {
+    if (currentOperator === e.currentTarget.id) {
         getSecondNumber()
         operate(currentOperator, firstNumber, secondNumber)
-    } 
+    }
+    if (currentOperator && currentOperator !== e.currentTarget.id) {
+        currentOperator = e.currentTarget.id;
+        return;
+    }
     getFirstNumber();
     currentNumber = "";
     currentOperator = e.currentTarget.id;
@@ -75,27 +79,6 @@ function getSecondNumber() {
 const equalsBtn = document.getElementById("Equal");
 equalsBtn.addEventListener("click", getEquation);
 function getEquation() {
-    // if (currentOperator === "Slash" && currentNumber === "") {
-    //     currentNumber = 1;
-    //     firstNumber = 1;
-    //     return display.textContent = 1;
-    // }
-    // if (currentOperator === "*" && currentNumber !== "") {
-    //     secondNumber = currentNumber;
-    //     currentOperator = "*";
-    //     operate(currentOperator, firstNumber, secondNumber);
-    //     return;
-    // } 
-    // if (currentOperator === "*" && currentNumber === "") {
-    //     currentNumber = firstNumber;
-    //     currentOperator = "*";
-    //     getSecondNumber();
-    //     operate(currentOperator, firstNumber, secondNumber);
-    //     return;
-    // }
-    // if (currentOperator === "Minus" && currentNumber === "") resetCalculator();
-    // if (currentOperator === "+" && currentNumber === "") currentNumber = firstNumber;
-
     switch (true) {
         case (currentOperator === "Slash" && currentNumber === ""):
             currentNumber = 1;
@@ -115,9 +98,17 @@ function getEquation() {
         case (currentOperator === "Minus" && currentNumber === ""):
             resetCalculator();
             break;
+        case (currentOperator === "+" && currentNumber !== ""):
+            secondNumber = currentNumber;
+            currentOperator = "+";
+            operate(currentOperator, firstNumber, secondNumber);
+            return;
         case (currentOperator === "+" && currentNumber === ""):
             currentNumber = firstNumber;
-            break;
+            currentOperator = "+";
+            getSecondNumber();
+            operate(currentOperator, firstNumber, secondNumber);
+            return;
     }
 
     getSecondNumber();
