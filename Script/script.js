@@ -1,21 +1,154 @@
+let firstNumber;
+let secondNumber;
+let currentOperator;
+let currentNumber = "";
+// let currentResult = "";
+
+const digits = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
+
+const display = document.querySelector(".display-text")
+const allBtns = document.querySelectorAll("button")
+const numbers = document.querySelectorAll(".number")
+const period = document.querySelector(".period");
+
+numbers.forEach(number => number.addEventListener("click", getNumber))
+// document.addEventListener("keydown", pressKey)
+
+// function pressKey(e) {
+//     if (e.code.includes("Digit")) {
+//         currentNumber += e.key
+//         display.textContent = currentNumber;
+//     }
+//     if (e.code === "Escape") resetCalculator()
+//     console.log(e)
+    
+// }
+
+period.addEventListener("click", getDecimal);
+function getDecimal(e) {
+    if (currentNumber.includes(".")) {
+        period.removeEventListener("click", getNumber)
+    } else {
+        currentNumber += e.currentTarget.id;
+        display.textContent = currentNumber;
+    }
+}
+
+function getNumber(e) {
+    currentNumber += e.currentTarget.id;
+    display.textContent = currentNumber;
+}
+
+const operatorBtns = document.querySelectorAll(".operator");
+operatorBtns.forEach(operator => operator.addEventListener("click", getOperator));
+operatorBtns.forEach(operator => operator.addEventListener("click", styleOperator));
+
+function styleOperator(e) {
+    removeOperatorStyle();
+    e.currentTarget.classList.add("active")
+}
+
+function removeOperatorStyle() {
+    operatorBtns.forEach(e => e.classList.remove("active"))
+}
+
+
+function getOperator(e) {
+    if (currentOperator) {
+        getSecondNumber()
+        operate(currentOperator, firstNumber, secondNumber)
+    } 
+    getFirstNumber();
+    currentNumber = "";
+    currentOperator = e.currentTarget.id;
+
+
+}
+
+function getFirstNumber() {
+    firstNumber = Number(currentNumber);
+}
+
+function getSecondNumber() {
+    secondNumber = Number(currentNumber);
+}
+
+
+const equalsBtn = document.getElementById("Equal");
+equalsBtn.addEventListener("click", getEquation);
+function getEquation() {
+    // console.log(`SN: ${secondNumber}`)
+    // console.log(`CN: ${currentNumber}`)
+    // console.log(`FN: ${firstNumber}`)
+    if (currentOperator === "*" && currentNumber === "") {
+        
+        console.log("SHTOP")
+    }
+    getSecondNumber();
+    operate(currentOperator, firstNumber, secondNumber);
+    // console.log(`CO: ${currentOperator}`)
+    currentOperator = "";
+    removeOperatorStyle()
+    
+    
+}
+
+const operate = function(operator, firstNumber, secondNumber) {
+    if (operator === "+") add(firstNumber, secondNumber);
+    if (operator === "Minus") subtract(firstNumber, secondNumber);
+    if (operator === "*") multiply(firstNumber, secondNumber);
+    if (operator === "Slash") divide(firstNumber, secondNumber);
+    if (currentNumber === Infinity) return display.textContent = "Error";
+    return display.textContent = Math.round(currentNumber * 100000) / 100000;
+}
+
 const add = function(firstNumber, secondNumber) {
-    return firstNumber + secondNumber;
+    currentNumber = firstNumber + secondNumber;
+    return currentNumber;
 }
 
 const subtract = function(firstNumber, secondNumber) {
-    return firstNumber - secondNumber;
+    currentNumber = firstNumber - secondNumber;
+    return currentNumber;
 }
 
 const multiply = function(firstNumber, secondNumber) {
-    return firstNumber * secondNumber;
+    currentNumber = firstNumber * secondNumber;
+    return currentNumber;
 }
 
 const divide = function(firstNumber, secondNumber) {
-    return firstNumber / secondNumber;
+    currentNumber = firstNumber / secondNumber;
+    return currentNumber;
 }
 
-let operate = function(operator, firstNumber, secondNumber) {
-    if (operator === "+") return add(firstNumber, secondNumber)
+
+const clearBtn = document.querySelector("#Escape");
+clearBtn.addEventListener("click", resetCalculator);
+function resetCalculator() {
+    firstNumber = "";
+    secondNumber = "";
+    currentOperator = "";
+    currentNumber = "";
+    display.textContent = "0";
+    removeOperatorStyle()
 }
 
-console.log(operate("+", 1, 2))
+const backSpaceBtn = document.querySelector("#Backspace");
+backSpaceBtn.addEventListener("click", deleteOneCharacter);
+function deleteOneCharacter() {
+    if (display.textContent === "0") return display.textContent = "0";
+    if (currentNumber.length === 1) return clearCurrentNumber();
+    currentNumber = currentNumber.substring(0, currentNumber.length - 1)
+    display.textContent = currentNumber;
+}
+
+function clearCurrentNumber() {
+    currentNumber = "";
+    display.textContent = "0";
+}
+
+allBtns.forEach(button => button.addEventListener("mousedown", (e) => e.currentTarget.classList.add("clicked")))
+allBtns.forEach(button => button.addEventListener("mouseup", (e) => e.currentTarget.classList.remove("clicked")))
+
+
