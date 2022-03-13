@@ -54,9 +54,10 @@ body {
 
 .display-text {
     color: var(--text);
-    font-size: 30px;
+    font-size: 40px;
     padding-bottom: 5px;
     padding-right: 10px;
+    font-weight: 100;
 }
 
 /* BUTTONS */
