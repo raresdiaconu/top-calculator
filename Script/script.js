@@ -58,38 +58,54 @@ function removeOperatorStyle() {
 
 
 function getOperator(e) {
+    if (currentOperator === e.currentTarget.id && currentOperator === "*") {
+        operate(currentOperator, firstNumber, secondNumber)
+        getFirstNumber();
+        currentOperator = e.currentTarget.id;
+        return;
+    }
     if (currentOperator === e.currentTarget.id) {
         getSecondNumber()
+        console.log("case2")
         operate(currentOperator, firstNumber, secondNumber)
+    }
+
+    if (currentNumber !== "") {
+        getFirstNumber();
+        currentOperator = e.currentTarget.id;
+        console.log("case3")
+        return;
     }
     if (currentOperator && currentOperator !== e.currentTarget.id) {
         currentOperator = e.currentTarget.id;
         return;
     }
     getFirstNumber();
-    currentNumber = "";
     currentOperator = e.currentTarget.id;
 }
 
 function getFirstNumber() {
     firstNumber = Number(currentNumber);
+    currentNumber = "";
 }
 
 function getSecondNumber() {
     secondNumber = Number(currentNumber);
+    currentNumber = "";
 }
 
 
 const equalsBtn = document.getElementById("Equal");
 equalsBtn.addEventListener("click", getEquation);
 function getEquation() {
+    removeOperatorStyle()
     switch (true) {
         case (currentOperator === "Slash" && currentNumber === ""):
             currentNumber = 1;
             firstNumber = 1;
             return display.textContent = 1;
         case (currentOperator === "*" && currentNumber !== ""):
-            secondNumber = currentNumber;
+            getSecondNumber();
             currentOperator = "*";
             operate(currentOperator, firstNumber, secondNumber);
             return;
@@ -103,7 +119,7 @@ function getEquation() {
             resetCalculator();
             break;
         case (currentOperator === "+" && currentNumber !== ""):
-            secondNumber = currentNumber;
+            getSecondNumber();
             currentOperator = "+";
             operate(currentOperator, firstNumber, secondNumber);
             return;
@@ -117,7 +133,6 @@ function getEquation() {
     getSecondNumber();
     operate(currentOperator, firstNumber, secondNumber);
     currentOperator = "";
-    removeOperatorStyle()
 }
 
 const operate = function(operator, firstNumber, secondNumber) {
@@ -211,12 +226,6 @@ function adjustFontSize(number) {
     }
     displayText.style.fontSize = `${fontSize}px`
 }
-
-
-
-
-
-
 
 
 // HELPER
