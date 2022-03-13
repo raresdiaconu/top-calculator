@@ -4,9 +4,7 @@ let currentOperator;
 let currentNumber = "";
 let fontSize = 40;
 let tempNumberLength;
-// let currentResult = "";
-
-const digits = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
+const digits = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "."]
 
 const display = document.querySelector(".display-text")
 const allBtns = document.querySelectorAll("button")
@@ -14,17 +12,25 @@ const numbers = document.querySelectorAll(".number")
 const period = document.querySelector(".period");
 
 numbers.forEach(number => number.addEventListener("click", getNumber))
-// document.addEventListener("keydown", pressKey)
+document.addEventListener("keydown", pressKey)
 
-// function pressKey(e) {
-//     if (e.code.includes("Digit")) {
-//         currentNumber += e.key
-//         display.textContent = currentNumber;
-//     }
-//     if (e.code === "Escape") resetCalculator()
-//     console.log(e)
-    
-// }
+function pressKey(e) {
+    const isNumber = (number) => number === e.key;
+    if (currentNumber.includes(".") && e.keyCode === 190) {
+        e.preventDefault();
+        return;
+    } else if (digits.some(isNumber)) {
+        currentNumber += e.key
+        display.textContent = currentNumber;
+    } else if (e.key === "Space") {
+        return;
+    } else if (e.key === "Backspace") {
+        deleteOneCharacter();
+    } else if (e.key === "Escape") {
+        resetCalculator();
+    }
+    adjustFontSize(currentNumber)
+}
 
 period.addEventListener("click", getDecimal);
 function getDecimal(e) {
@@ -58,22 +64,14 @@ function removeOperatorStyle() {
 
 
 function getOperator(e) {
-    if (currentOperator === e.currentTarget.id && currentOperator === "*") {
-        operate(currentOperator, firstNumber, secondNumber)
-        getFirstNumber();
-        currentOperator = e.currentTarget.id;
-        return;
-    }
     if (currentOperator === e.currentTarget.id) {
         getSecondNumber()
-        console.log("case2")
         operate(currentOperator, firstNumber, secondNumber)
     }
 
     if (currentNumber !== "") {
         getFirstNumber();
         currentOperator = e.currentTarget.id;
-        console.log("case3")
         return;
     }
     if (currentOperator && currentOperator !== e.currentTarget.id) {
