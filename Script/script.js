@@ -2,6 +2,8 @@ let firstNumber;
 let secondNumber;
 let currentOperator;
 let currentNumber = "";
+let fontSize = 40;
+let tempNumberLength;
 // let currentResult = "";
 
 const digits = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
@@ -32,9 +34,11 @@ function getDecimal(e) {
         currentNumber += e.currentTarget.id;
         display.textContent = currentNumber;
     }
+    adjustFontSize(currentNumber)
 }
 
 function getNumber(e) {
+    adjustFontSize(currentNumber)
     currentNumber += e.currentTarget.id;
     display.textContent = currentNumber;
 }
@@ -110,13 +114,10 @@ function getEquation() {
             operate(currentOperator, firstNumber, secondNumber);
             return;
     }
-
     getSecondNumber();
     operate(currentOperator, firstNumber, secondNumber);
     currentOperator = "";
     removeOperatorStyle()
-
-    
 }
 
 const operate = function(operator, firstNumber, secondNumber) {
@@ -125,6 +126,7 @@ const operate = function(operator, firstNumber, secondNumber) {
     if (operator === "*") multiply(firstNumber, secondNumber);
     if (operator === "Slash") divide(firstNumber, secondNumber);
     if (currentNumber === Infinity) return display.textContent = "Error";
+    adjustFontSize(currentNumber)
     return display.textContent = Math.round(currentNumber * (10 ** 11)) / (10 ** 11);
 }
 
@@ -158,11 +160,13 @@ function resetCalculator() {
     currentNumber = "";
     display.textContent = "0";
     removeOperatorStyle()
+    adjustFontSize(currentNumber)
 }
 
 const backSpaceBtn = document.querySelector("#Backspace");
 backSpaceBtn.addEventListener("click", deleteOneCharacter);
 function deleteOneCharacter() {
+    adjustFontSize(currentNumber)
     if (display.textContent === "0") return display.textContent = "0";
     if (currentNumber.length === 1) return clearCurrentNumber();
     currentNumber = currentNumber.substring(0, currentNumber.length - 1)
@@ -176,6 +180,40 @@ function clearCurrentNumber() {
 
 allBtns.forEach(button => button.addEventListener("mousedown", (e) => e.currentTarget.classList.add("clicked")))
 allBtns.forEach(button => button.addEventListener("mouseup", (e) => e.currentTarget.classList.remove("clicked")))
+
+const displayText = document.querySelector(".display-text");
+function adjustFontSize(number) {
+    let currentNumberLength = number.toString().length
+    switch (true) {
+        case (currentNumberLength > 50):
+            resetCalculator();
+            break;
+        case (currentNumberLength > 32):
+            fontSize = 8;
+            break;
+        case (currentNumberLength > 25):
+            fontSize = 12;
+            break;
+        case (currentNumberLength > 21):
+            fontSize = 15;
+            break;
+        case (currentNumberLength > 19):
+            fontSize = 18;
+            break; 
+        case (currentNumberLength > 12):
+            fontSize = 20;
+            break;  
+        case (currentNumberLength > 9):
+            fontSize = 30;
+            break;
+        default:
+            fontSize = 40;
+    }
+    displayText.style.fontSize = `${fontSize}px`
+}
+
+
+
 
 
 
