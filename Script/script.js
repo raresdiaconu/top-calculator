@@ -4,57 +4,76 @@ let currentOperator;
 let currentNumber = "0";
 let fontSize = 40;
 let tempNumberLength;
-const digits = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "."]
+const digits = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
+const operators = ["/", "*", "+", "-"];
 
 const display = document.querySelector(".display-text")
 const allBtns = document.querySelectorAll("button")
 const numbers = document.querySelectorAll(".number")
 const period = document.querySelector(".period");
+const operatorBtns = document.querySelectorAll(".operator");
+const equalsBtn = document.getElementById("=");
+const clearBtn = document.querySelector("#Escape");
+const backSpaceBtn = document.querySelector("#Backspace");
+const displayText = document.querySelector(".display-text");
 
-numbers.forEach(number => number.addEventListener("click", getNumber))
+const setMouseDecimal = (e) => setDecimal(e.currentTarget.id);
+const setMouseNumber = (e) => setNumber(e.currentTarget.id);
+const getMouseOperator = (e) => processOperator(e.currentTarget.id);
+const getKeyOperator = (e) => processOperator(e);
+const getFirstNumber = () => firstNumber = Number(currentNumber);
+const getSecondNumber = () => secondNumber = Number(currentNumber);
+
+numbers.forEach(number => number.addEventListener("click", setMouseNumber))
 document.addEventListener("keydown", pressKey)
+period.addEventListener("click", setMouseDecimal);
+operatorBtns.forEach(operator => operator.addEventListener("click", getMouseOperator));
+operatorBtns.forEach(operator => operator.addEventListener("click", styleOperator));
+equalsBtn.addEventListener("click", getEquation);
+clearBtn.addEventListener("click", resetCalculator);
+backSpaceBtn.addEventListener("click", deleteOneCharacter);
+window.addEventListener("keydown", styleKeyOperator);
+window.addEventListener("keydown", styleButtons);
+window.addEventListener("keyup", removeStyleButtons);
 
 function pressKey(e) {
-    if (currentNumber.length === 1 && currentNumber.includes("0")) removeZero();
     const isNumber = (number) => number === e.key;
-    if (currentNumber.includes(".") && e.keyCode === 190) {
-        e.preventDefault();
-        return;
-    } else if (digits.some(isNumber)) {
-        currentNumber += e.key
-        display.textContent = currentNumber;
-    } else if (e.key === "Space") {
-        return;
-    } else if (e.key === "Backspace") {
-        deleteOneCharacter();
-    } else if (e.key === "Escape") {
-        resetCalculator();
-    } else if (e.key === "=") {
-        getEquation();
+    const isOperator = (operator) => operator === e.key;
+    switch (true) {
+        case (currentNumber.toString().includes(".") && e.key === "."):
+            e.preventDefault();
+            break;
+        case (e.key === "Space"):
+            break;
+        case (e.key === "Backspace"):
+            deleteOneCharacter();
+            break;
+        case (e.key === "Escape"):
+            resetCalculator();
+            break;
+        case (e.key === "=" || e.key === "Enter"):
+            getEquation();
+            break;
+        case (operators.some(isOperator)):
+            getKeyOperator(e.key);
+            break;
+        case (digits.some(isNumber)):
+            setNumber(e.key);
+            break;
+        case (e.key === "."):
+            setDecimal(e.key);
+            break;
     }
-    adjustFontSize(currentNumber)
 }
 
-period.addEventListener("click", getDecimal);
-function getDecimal(e) {
-    if (currentNumber.includes(".")) {
-        period.removeEventListener("click", getNumber)
-    } else {
-        currentNumber += e.currentTarget.id;
-        display.textContent = currentNumber;
-    }
-    adjustFontSize(currentNumber)
-}
-
-function getNumber(e) {
-    adjustFontSize(currentNumber)
+function setNumber(number) {
+    adjustFontSize()
     if (currentOperator === "reset") {
         resetCalculator();
         currentOperator === "isReset";
     }
     if (currentNumber.length === 1 && currentNumber.includes("0")) removeZero()
-
-    currentNumber += e.currentTarget.id;
+    currentNumber += number;
     display.textContent = currentNumber;
 }
 
@@ -62,60 +81,36 @@ function removeZero() {
     return currentNumber = currentNumber.substring(1);
 }
 
-const operatorBtns = document.querySelectorAll(".operator");
-operatorBtns.forEach(operator => operator.addEventListener("click", getOperator));
-operatorBtns.forEach(operator => operator.addEventListener("click", styleOperator));
-
-function styleOperator(e) {
-    removeOperatorStyle();
-    e.currentTarget.classList.add("active")
+function setDecimal(decimal) {
+    if (currentNumber.length === 0) {
+        console.log("HIYUH")
+        currentNumber += "0" + decimal;
+        display.textContent = currentNumber;
+    }
+    if (currentNumber.includes(".")) {
+        period.removeEventListener("click", setNumber)
+    } else {
+        currentNumber += decimal;
+        display.textContent = currentNumber;
+    }
+    adjustFontSize()
 }
 
-function removeOperatorStyle() {
-    operatorBtns.forEach(e => e.classList.remove("active"))
-}
-
-// If the current operator is reset after =, assign the operator again 
-// Get multiples of numbers with + and *
-// Get the sum when you make an operation followed by another operation
-
-
-function getOperator(e) {
-
+function processOperator(operator) {
     if (currentOperator === "reset") {
-        currentOperator = e.currentTarget.id;
-    } else if (currentOperator === e.currentTarget.id) {
-        if (secondNumber === undefined || secondNumber === "" || currentNumber !== secondNumber) {
-            getSecondNumber();
-        }
-        console.log(`FN: ${firstNumber}`)
-        console.log(`SN: ${secondNumber}`)
-        console.log(`CN: ${currentNumber}`)
-        console.log(`CO: ${currentOperator}`)
-        
+        currentOperator = operator;
+    } else if (currentOperator === operator) {
+        if (secondNumber === undefined || secondNumber === "" || currentNumber !== secondNumber) getSecondNumber()
         operate(currentOperator, firstNumber, secondNumber)
-    } else if (currentOperator && currentOperator !== e.currentTarget.id) {
+    } else if (currentOperator && currentOperator !== operator) {
         getSecondNumber();
         operate(currentOperator, firstNumber, secondNumber)
     }
     getFirstNumber();
     currentNumber = "";
-    currentOperator = e.currentTarget.id;
+    currentOperator = operator;
 }
 
-function getFirstNumber() {
-    firstNumber = Number(currentNumber);
-    
-}
-
-function getSecondNumber() {
-    secondNumber = Number(currentNumber);
-    currentNumber = "";
-}
-
-
-const equalsBtn = document.getElementById("=");
-equalsBtn.addEventListener("click", getEquation);
 function getEquation() {
     if (firstNumber === undefined && secondNumber === undefined) return resetCalculator();
     if (firstNumber === "" && secondNumber === "") return resetCalculator();
@@ -123,6 +118,7 @@ function getEquation() {
     if (currentOperator === "reset") return display.textContent = Math.round(currentNumber * (10 ** 5)) / (10 ** 5);
     removeOperatorStyle()
     getSecondNumber();
+    currentNumber = ""
     operate(currentOperator, firstNumber, secondNumber);
     currentOperator = "reset";
 }
@@ -132,35 +128,18 @@ const operate = function(operator, firstNumber, secondNumber) {
     if (operator === "-") subtract(firstNumber, secondNumber);
     if (operator === "*") multiply(firstNumber, secondNumber);
     if (operator === "/") divide(firstNumber, secondNumber);
-    if (currentNumber === Infinity) return display.textContent = "Error";
-    adjustFontSize(currentNumber)
+    if (currentNumber === Infinity) return display.textContent = "error";
+    currentNumber = Math.round(currentNumber * (10 ** 5)) / (10 ** 5);
+    adjustFontSize()
     if (currentNumber === 0) resetCalculator();
-    return display.textContent = Math.round(currentNumber * (10 ** 5)) / (10 ** 5);
+    return display.textContent = currentNumber;
 }
 
-const add = function(firstNumber, secondNumber) {
-    currentNumber = firstNumber + secondNumber;
-    return currentNumber;
-}
+const add = (firstNumber, secondNumber) => currentNumber = firstNumber + secondNumber
+const subtract = (firstNumber, secondNumber) => currentNumber = firstNumber - secondNumber
+const multiply = (firstNumber, secondNumber) => currentNumber = firstNumber * secondNumber
+const divide = (firstNumber, secondNumber) => currentNumber = firstNumber / secondNumber
 
-const subtract = function(firstNumber, secondNumber) {
-    currentNumber = firstNumber - secondNumber;
-    return currentNumber;
-}
-
-const multiply = function(firstNumber, secondNumber) {
-    currentNumber = firstNumber * secondNumber;
-    return currentNumber;
-}
-
-const divide = function(firstNumber, secondNumber) {
-    currentNumber = firstNumber / secondNumber;
-    return currentNumber;
-}
-
-
-const clearBtn = document.querySelector("#Escape");
-clearBtn.addEventListener("click", resetCalculator);
 function resetCalculator() {
     firstNumber = "";
     secondNumber = "";
@@ -168,13 +147,11 @@ function resetCalculator() {
     currentNumber = "0";
     display.textContent = "0";
     removeOperatorStyle()
-    adjustFontSize(currentNumber)
+    adjustFontSize()
 }
 
-const backSpaceBtn = document.querySelector("#Backspace");
-backSpaceBtn.addEventListener("click", deleteOneCharacter);
 function deleteOneCharacter() {
-    adjustFontSize(currentNumber)
+    adjustFontSize()
     if (display.textContent === "0") return resetCalculator();
     if (currentNumber.length === 1) return clearCurrentNumber();
     currentNumber = currentNumber.substring(0, currentNumber.length - 1)
@@ -186,12 +163,43 @@ function clearCurrentNumber() {
     display.textContent = "0";
 }
 
+function styleOperator(e) {
+    removeOperatorStyle();
+    e.currentTarget.classList.add("active")
+}
+
+function styleKeyOperator(e) {
+    const button = document.querySelector(`button[id="${e.key}"]`)
+    const isOperator = (operator) => operator === e.key;
+    if (operators.some(isOperator)) {
+        removeOperatorStyle();
+        button.classList.add("active");
+    }
+}
+
+function removeOperatorStyle() {
+    operatorBtns.forEach(e => e.classList.remove("active"))
+}
+
 allBtns.forEach(button => button.addEventListener("mousedown", (e) => e.currentTarget.classList.add("clicked")))
 allBtns.forEach(button => button.addEventListener("mouseup", (e) => e.currentTarget.classList.remove("clicked")))
 
-const displayText = document.querySelector(".display-text");
-function adjustFontSize(number) {
-    let currentNumberLength = number.toString().length
+function styleButtons(e) {
+    const button = document.querySelector(`button[id="${e.key}"]`)
+    const enterBtn = document.getElementById("=")
+    if (button) button.classList.add("clicked")
+    if (e.key === "Enter") enterBtn.classList.add("clicked")
+}
+
+function removeStyleButtons(e) {
+    const button = document.querySelector(`button[id="${e.key}"]`)
+    const enterBtn = document.getElementById("=")
+    if (button) button.classList.remove("clicked")
+    if (e.key === "Enter") enterBtn.classList.remove("clicked")
+}
+
+function adjustFontSize() {
+    let currentNumberLength = currentNumber.toString().length
     switch (true) {
         case (currentNumberLength > 50):
             resetCalculator();
@@ -202,14 +210,14 @@ function adjustFontSize(number) {
         case (currentNumberLength > 25):
             fontSize = 12;
             break;
-        case (currentNumberLength > 21):
+        case (currentNumberLength > 20):
             fontSize = 15;
             break;
-        case (currentNumberLength > 19):
+        case (currentNumberLength > 18):
             fontSize = 18;
             break; 
         case (currentNumberLength > 12):
-            fontSize = 20;
+            fontSize = 21;
             break;  
         case (currentNumberLength > 9):
             fontSize = 30;
@@ -219,7 +227,6 @@ function adjustFontSize(number) {
     }
     displayText.style.fontSize = `${fontSize}px`
 }
-
 
 // HELPER
         // console.log(`FN: ${firstNumber}`)
