@@ -15,6 +15,7 @@ numbers.forEach(number => number.addEventListener("click", getNumber))
 document.addEventListener("keydown", pressKey)
 
 function pressKey(e) {
+    if (currentNumber.length === 1 && currentNumber.includes("0")) removeZero();
     const isNumber = (number) => number === e.key;
     if (currentNumber.includes(".") && e.keyCode === 190) {
         e.preventDefault();
@@ -45,8 +46,14 @@ function getDecimal(e) {
 
 function getNumber(e) {
     adjustFontSize(currentNumber)
+    if (currentNumber.length === 1 && currentNumber.includes("0")) removeZero();
     currentNumber += e.currentTarget.id;
     display.textContent = currentNumber;
+    console.log(currentOperator)
+}
+
+function removeZero() {
+    return currentNumber = currentNumber.substring(1);
 }
 
 const operatorBtns = document.querySelectorAll(".operator");
@@ -74,6 +81,7 @@ function getOperator(e) {
         currentOperator = e.currentTarget.id;
         return;
     }
+
     if (currentOperator && currentOperator !== e.currentTarget.id) {
         currentOperator = e.currentTarget.id;
         return;
@@ -98,6 +106,12 @@ equalsBtn.addEventListener("click", getEquation);
 function getEquation() {
     removeOperatorStyle()
     switch (true) {
+        case (currentOperator === "Slash" && currentNumber !== ""):
+            if (secondNumber === undefined || secondNumber === "") secondNumber = currentNumber
+            currentOperator = "Slash";
+            operate(currentOperator, firstNumber, secondNumber);
+            firstNumber = currentNumber;
+            return;
         case (currentOperator === "Slash" && currentNumber === ""):
             currentNumber = 1;
             firstNumber = 1;
@@ -112,6 +126,12 @@ function getEquation() {
             currentOperator = "*";
             getSecondNumber();
             operate(currentOperator, firstNumber, secondNumber);
+            return;
+        case (currentOperator === "Minus" && currentNumber !== ""):
+            if (secondNumber === undefined || secondNumber === "") secondNumber = currentNumber
+            currentOperator = "Minus";
+            operate(currentOperator, firstNumber, secondNumber);
+            firstNumber = currentNumber;
             return;
         case (currentOperator === "Minus" && currentNumber === ""):
             resetCalculator();
