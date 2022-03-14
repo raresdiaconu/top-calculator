@@ -47,13 +47,13 @@ function getDecimal(e) {
 }
 
 function getNumber(e) {
-    console.log(`FN: ${firstNumber}`)
-    console.log(`SN: ${secondNumber}`)
-    console.log(`CN: ${currentNumber}`)
-    console.log(`CO: ${currentOperator}`)
-    if (firstNumber && secondNumber) currentNumber = "";
     adjustFontSize(currentNumber)
-    if (currentNumber.length === 1 && currentNumber.includes("0")) removeZero();
+    if (currentOperator === "reset") {
+        resetCalculator();
+        currentOperator === "isReset";
+    }
+    if (currentNumber.length === 1 && currentNumber.includes("0")) removeZero()
+
     currentNumber += e.currentTarget.id;
     display.textContent = currentNumber;
 }
@@ -75,25 +75,37 @@ function removeOperatorStyle() {
     operatorBtns.forEach(e => e.classList.remove("active"))
 }
 
+// If the current operator is reset after =, assign the operator again 
+// Get multiples of numbers with + and *
+// Get the sum when you make an operation followed by another operation
+
 
 function getOperator(e) {
-    if (currentOperator === e.currentTarget.id) {
-        if (secondNumber === undefined || secondNumber === "") getSecondNumber();
+
+    if (currentOperator === "reset") {
+        currentOperator = e.currentTarget.id;
+    } else if (currentOperator === e.currentTarget.id) {
+        if (secondNumber === undefined || secondNumber === "" || currentNumber !== secondNumber) {
+            getSecondNumber();
+        }
+        console.log(`FN: ${firstNumber}`)
+        console.log(`SN: ${secondNumber}`)
+        console.log(`CN: ${currentNumber}`)
+        console.log(`CO: ${currentOperator}`)
+        
+        operate(currentOperator, firstNumber, secondNumber)
+    } else if (currentOperator && currentOperator !== e.currentTarget.id) {
+        getSecondNumber();
         operate(currentOperator, firstNumber, secondNumber)
     }
-
-    if (currentOperator && currentOperator !== e.currentTarget.id) {
-        getSecondNumber()
-        operate(currentOperator, firstNumber, secondNumber)
-    }
-
     getFirstNumber();
+    currentNumber = "";
     currentOperator = e.currentTarget.id;
 }
 
 function getFirstNumber() {
     firstNumber = Number(currentNumber);
-    currentNumber = "";
+    
 }
 
 function getSecondNumber() {
@@ -105,10 +117,14 @@ function getSecondNumber() {
 const equalsBtn = document.getElementById("=");
 equalsBtn.addEventListener("click", getEquation);
 function getEquation() {
+    if (firstNumber === undefined && secondNumber === undefined) return resetCalculator();
+    if (firstNumber === "" && secondNumber === "") return resetCalculator();
+    if (currentNumber === undefined || currentNumber === "") return resetCalculator();
+    if (currentOperator === "reset") return display.textContent = Math.round(currentNumber * (10 ** 5)) / (10 ** 5);
     removeOperatorStyle()
     getSecondNumber();
     operate(currentOperator, firstNumber, secondNumber);
-    currentOperator = "";
+    currentOperator = "reset";
 }
 
 const operate = function(operator, firstNumber, secondNumber) {
@@ -146,9 +162,9 @@ const divide = function(firstNumber, secondNumber) {
 const clearBtn = document.querySelector("#Escape");
 clearBtn.addEventListener("click", resetCalculator);
 function resetCalculator() {
-    firstNumber;
-    secondNumber;
-    currentOperator;
+    firstNumber = "";
+    secondNumber = "";
+    currentOperator = "";
     currentNumber = "0";
     display.textContent = "0";
     removeOperatorStyle()
