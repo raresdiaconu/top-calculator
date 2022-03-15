@@ -3,7 +3,6 @@ let secondNumber;
 let currentOperator;
 let currentNumber = "0";
 let fontSize = 40;
-let tempNumberLength;
 const digits = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
 const operators = ["/", "*", "+", "-"];
 
@@ -83,7 +82,6 @@ function removeZero() {
 
 function setDecimal(decimal) {
     if (currentNumber.length === 0) {
-        console.log("HIYUH")
         currentNumber += "0" + decimal;
         display.textContent = currentNumber;
     }
