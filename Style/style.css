@@ -26,10 +26,13 @@ html {
 }
 
 body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    background: rgb(255,252,250);
+    background: radial-gradient(circle, rgba(255,252,250,1) 70%, rgba(255,242,231,1) 100%);
     height: 100vh;
+    display: grid;
+    grid-template-rows: 2fr 30px;
+    justify-items: center;
+    align-items: center;
 }
 
 .calculator {
@@ -121,3 +124,21 @@ button {
     grid-column: 1 / 3;
 }
 
+/* FOOTER */
+
+.footer-copyright {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    text-decoration: none;
+}
+
+.footer-logo {
+    width: 18px;
+    opacity: 1;
+}
+
+footer * p {
+    color: var(--display);
+    font-size: 12px;
+}
